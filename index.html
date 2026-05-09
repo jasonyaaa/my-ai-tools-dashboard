@@ -1,612 +1,619 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AI 工具箱</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-/* ── Reset & base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:        #f7f6f3;
-  --surface:   #ffffff;
-  --surface2:  #f0eeea;
-  --border:    #e4e1db;
-  --border2:   #ccc9c1;
-  --text:      #1a1917;
-  --muted:     #6b6860;
-  --dim:       #a8a49d;
-  --font:      'DM Sans', sans-serif;
-  --mono:      'DM Mono', monospace;
-  --r:         10px;
-  --r-lg:      14px;
-
-  /* type accent colours */
-  --c-gemini:  #16a34a;
-  --c-claude:  #c2410c;
-  --c-custom:  #1d4ed8;
-  --c-note:    #7c3aed;
-  --c-other:   #374151;
-
-  --bg-gemini: #f0fdf4;
-  --bg-claude: #fff7ed;
-  --bg-custom: #eff6ff;
-  --bg-note:   #f5f3ff;
-  --bg-other:  #f9fafb;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f3;--surface:#fff;--surface2:#f0eeea;--border:#e4e1db;--border2:#ccc9c1;
+  --text:#1a1917;--muted:#6b6860;--dim:#a8a49d;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:10px;--r-lg:14px;
+  --c-gemini:#16a34a;--c-claude:#c2410c;--c-custom:#1d4ed8;--c-note:#7c3aed;--c-other:#374151;
+  --bg-gemini:#f0fdf4;--bg-claude:#fff7ed;--bg-custom:#eff6ff;--bg-note:#f5f3ff;--bg-other:#f9fafb;
+  --bd-gemini:#bbf7d0;--bd-claude:#fed7aa;--bd-custom:#bfdbfe;--bd-note:#ddd6fe;--bd-other:#d1d5db;
 }
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ── Config banner ── */
-#config-banner {
-  background: #fefce8;
-  border-bottom: 1px solid #fde68a;
-  padding: 10px 2rem;
-  font-size: 13px;
-  color: #92400e;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-#config-banner code {
-  font-family: var(--mono);
-  background: #fde68a55;
-  padding: 1px 6px;
-  border-radius: 4px;
-}
-#config-banner.hidden { display: none; }
-
-/* ── Layout ── */
-.page { max-width: 960px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+/* ── Page ── */
+.page{max-width:980px;margin:0 auto;padding:0 1.5rem 4rem}
 
 /* ── Header ── */
-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 2.5rem 0 1.5rem;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.logo {
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: -0.3px;
-  color: var(--text);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-.logo-dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--c-gemini);
-  margin-right: 7px;
-  vertical-align: middle;
-  position: relative; top: -1px;
-}
-.tagline { font-size: 13px; color: var(--muted); }
-
-.header-right { display: flex; gap: 8px; }
-.icon-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 13px;
-  font-size: 12px; font-family: var(--font);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  color: var(--muted);
-  cursor: pointer;
-  text-decoration: none;
-  transition: border-color .15s, color .15s;
-  white-space: nowrap;
-}
-.icon-btn:hover { border-color: var(--border2); color: var(--text); }
+header{display:flex;align-items:flex-end;justify-content:space-between;padding:2.5rem 0 1.5rem;gap:1rem;flex-wrap:wrap}
+.logo{font-size:20px;font-weight:500;letter-spacing:-0.3px;margin-bottom:4px}
+.logo-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c-gemini);margin-right:7px;vertical-align:middle;position:relative;top:-1px}
+.tagline{font-size:13px;color:var(--muted)}
+.header-right{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:flex;align-items:center;gap:6px;padding:7px 13px;font-size:12px;font-family:var(--font);background:var(--surface);border:1px solid var(--border);border-radius:var(--r);color:var(--muted);cursor:pointer;text-decoration:none;transition:border-color .15s,color .15s;white-space:nowrap}
+.btn:hover{border-color:var(--border2);color:var(--text)}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+.btn-primary:hover{opacity:.85;color:var(--bg)}
 
 /* ── Search ── */
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 9px 14px;
-  margin-bottom: 2rem;
-  transition: border-color .15s;
-}
-.search-row:focus-within { border-color: var(--border2); }
-.search-icon { color: var(--dim); font-size: 15px; flex-shrink: 0; }
-.search-input {
-  flex: 1; border: none; outline: none; background: none;
-  font-family: var(--font); font-size: 14px; color: var(--text);
-}
-.search-input::placeholder { color: var(--dim); }
-.search-clear {
-  font-size: 13px; color: var(--dim); cursor: pointer;
-  display: none; background: none; border: none; padding: 0;
-  font-family: var(--font);
-}
-.search-clear.visible { display: block; }
-.search-clear:hover { color: var(--muted); }
+.search-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;margin-bottom:1.5rem;transition:border-color .15s}
+.search-row:focus-within{border-color:var(--border2)}
+.search-input{flex:1;border:none;outline:none;background:none;font-family:var(--font);font-size:14px;color:var(--text)}
+.search-input::placeholder{color:var(--dim)}
+.search-clear{font-size:13px;color:var(--dim);cursor:pointer;display:none;background:none;border:none;padding:0;font-family:var(--font)}
+.search-clear.show{display:block}
 
-/* ── Stats strip ── */
-.stats-strip {
-  display: flex; gap: 1.5rem; margin-bottom: 1.75rem;
-  font-size: 13px; color: var(--muted);
-}
-.stat { display: flex; align-items: center; gap: 5px; }
-.stat strong { color: var(--text); font-weight: 500; }
+/* ── Stats ── */
+.stats{display:flex;gap:1.5rem;margin-bottom:1.75rem;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.stats strong{color:var(--text);font-weight:500}
 
 /* ── Folder ── */
-.folder { margin-bottom: 1.75rem; }
-.folder-head {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 12px;
-  cursor: pointer;
-  user-select: none;
-}
-.folder-head:hover .folder-label { color: var(--text); }
-.f-icon { font-size: 14px; color: var(--dim); }
-.folder-label { font-size: 12px; font-weight: 500; color: var(--muted); flex: 1; letter-spacing: 0.4px; text-transform: uppercase; }
-.f-count {
-  font-family: var(--mono); font-size: 11px; color: var(--dim);
-  background: var(--surface2); border: 1px solid var(--border);
-  padding: 1px 7px; border-radius: 20px;
-}
-.f-chevron { font-size: 13px; color: var(--dim); transition: transform .2s; display: inline-block; }
-.folder-head.collapsed .f-chevron { transform: rotate(-90deg); }
+.folder{margin-bottom:1.75rem}
+.folder-head{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:12px;cursor:pointer;user-select:none}
+.folder-head:hover .folder-label{color:var(--text)}
+.f-chevron{font-size:13px;color:var(--dim);transition:transform .2s;display:inline-block}
+.folder-head.collapsed .f-chevron{transform:rotate(-90deg)}
+.folder-label{font-size:12px;font-weight:500;color:var(--muted);flex:1;letter-spacing:0.4px;text-transform:uppercase}
+.f-count{font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);padding:1px 7px;border-radius:20px}
+.f-add{font-size:18px;color:var(--dim);cursor:pointer;padding:0 4px;background:none;border:none;font-family:var(--font);line-height:1;transition:color .15s}
+.f-add:hover{color:var(--text)}
+.f-delete{font-size:12px;color:var(--dim);cursor:pointer;padding:2px 6px;background:none;border:none;font-family:var(--font);transition:color .15s;border-radius:4px}
+.f-delete:hover{color:#dc2626;background:#fef2f2}
 
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 10px;
-}
-.folder-grid-wrap { overflow: hidden; transition: opacity .15s; }
-.folder-grid-wrap.collapsed { display: none; }
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.grid-wrap.collapsed{display:none}
 
 /* ── Tool card ── */
-.tool-card {
-  display: block;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 15px;
-  text-decoration: none;
-  color: var(--text);
-  transition: border-color .15s, box-shadow .15s, transform .1s;
-  position: relative;
-}
-.tool-card:hover {
-  border-color: var(--border2);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-}
-.card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
-.card-emoji {
-  width: 34px; height: 34px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0;
-  background: var(--surface2);
-}
-.card-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; padding-top: 2px; }
-.card-desc { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; min-height: 32px; }
-.card-foot { display: flex; align-items: center; justify-content: space-between; }
-.type-badge {
-  font-family: var(--mono); font-size: 10px; font-weight: 500;
-  padding: 2px 8px; border-radius: 20px; border: 1px solid;
-}
-.badge-gemini { color: var(--c-gemini); border-color: #bbf7d0; background: var(--bg-gemini); }
-.badge-claude  { color: var(--c-claude);  border-color: #fed7aa; background: var(--bg-claude);  }
-.badge-custom  { color: var(--c-custom);  border-color: #bfdbfe; background: var(--bg-custom);  }
-.badge-note    { color: var(--c-note);    border-color: #ddd6fe; background: var(--bg-note);    }
-.badge-other   { color: var(--c-other);   border-color: #d1d5db; background: var(--bg-other);   }
-.card-arrow { font-size: 13px; color: var(--dim); }
-.tool-card:hover .card-arrow { color: var(--muted); }
+.tool-card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:15px;text-decoration:none;color:var(--text);transition:border-color .15s,box-shadow .15s,transform .1s;position:relative}
+.tool-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.card-emoji{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:var(--surface2)}
+.card-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.4;padding-top:2px}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:10px;min-height:28px}
+.card-foot{display:flex;align-items:center;justify-content:space-between}
+.type-badge{font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;border:1px solid}
+.badge-gemini{color:var(--c-gemini);border-color:var(--bd-gemini);background:var(--bg-gemini)}
+.badge-claude{color:var(--c-claude);border-color:var(--bd-claude);background:var(--bg-claude)}
+.badge-custom{color:var(--c-custom);border-color:var(--bd-custom);background:var(--bg-custom)}
+.badge-note{color:var(--c-note);border-color:var(--bd-note);background:var(--bg-note)}
+.badge-other{color:var(--c-other);border-color:var(--bd-other);background:var(--bg-other)}
+.card-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.tool-card:hover .card-actions{opacity:1}
+.card-act{font-size:11px;color:var(--dim);cursor:pointer;padding:3px 7px;background:none;border:1px solid var(--border);border-radius:5px;font-family:var(--font);transition:all .15s}
+.card-act:hover{border-color:var(--border2);color:var(--text)}
+.card-act.del:hover{border-color:#fca5a5;color:#dc2626;background:#fef2f2}
+.card-link{font-size:13px;color:var(--dim)}
+.tool-card:hover .card-link{color:var(--muted)}
 
-/* ── Empty / loading / error ── */
-.state-box {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.8;
-}
-.state-box .state-icon { font-size: 28px; margin-bottom: 12px; }
-.state-box code { font-family: var(--mono); font-size: 12px; background: var(--surface2); padding: 2px 8px; border-radius: 4px; }
+/* ── Add folder bar ── */
+.add-folder-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface);border:1px dashed var(--border);border-radius:var(--r);margin-bottom:1.5rem;cursor:pointer;font-size:13px;color:var(--muted);transition:border-color .15s,color .15s}
+.add-folder-bar:hover{border-color:var(--border2);color:var(--text)}
 
-/* ── Config modal ── */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r-lg); padding: 1.75rem;
-  width: 460px; max-width: 90vw;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-}
-.modal h3 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
-.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; }
-.field-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 5px; display: block; }
-.field-input {
-  width: 100%; padding: 8px 12px; font-family: var(--mono);
-  font-size: 13px; border: 1px solid var(--border); border-radius: var(--r);
-  outline: none; background: var(--bg); color: var(--text); margin-bottom: 1rem;
-}
-.field-input:focus { border-color: var(--border2); }
-.modal-help {
-  font-size: 12px; color: var(--muted); line-height: 1.7;
-  background: var(--surface2); border-radius: var(--r);
-  padding: 10px 12px; margin-bottom: 1.25rem;
-}
-.modal-help code { font-family: var(--mono); color: var(--text); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-.btn-primary {
-  padding: 8px 18px; font-family: var(--font); font-size: 13px;
-  background: var(--text); color: var(--bg);
-  border: none; border-radius: var(--r); cursor: pointer;
-  transition: opacity .15s;
-}
-.btn-primary:hover { opacity: .85; }
-.btn-ghost {
-  padding: 8px 14px; font-family: var(--font); font-size: 13px;
-  background: none; color: var(--muted);
-  border: 1px solid var(--border); border-radius: var(--r); cursor: pointer;
-}
-.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+/* ── State boxes ── */
+.state-box{text-align:center;padding:4rem 2rem;color:var(--muted);font-size:14px;line-height:1.8}
+.state-icon{font-size:28px;margin-bottom:12px}
 
-/* ── Responsive ── */
-@media (max-width: 540px) {
-  .tools-grid { grid-template-columns: 1fr 1fr; }
-  .stats-strip { gap: 1rem; }
-}
-@media (max-width: 360px) {
-  .tools-grid { grid-template-columns: 1fr; }
-}
+/* ── Toast ── */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:9px 18px;border-radius:var(--r);font-size:13px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:999}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── Modal ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.75rem;width:480px;max-width:92vw;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.modal-title{font-size:16px;font-weight:500;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:1.25rem}
+.field-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px;display:block}
+.field-input,.field-select,.field-textarea{width:100%;padding:8px 12px;font-family:var(--font);font-size:13px;border:1px solid var(--border);border-radius:var(--r);outline:none;background:var(--bg);color:var(--text);margin-bottom:12px;transition:border-color .15s}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--border2)}
+.field-textarea{resize:vertical;min-height:60px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.modal-hint{font-size:12px;color:var(--muted);line-height:1.7;background:var(--surface2);border-radius:var(--r);padding:10px 12px;margin-bottom:1.25rem}
+.modal-hint code{font-family:var(--mono);color:var(--text)}
+
+/* ── Loading spinner ── */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:540px){.tools-grid{grid-template-columns:1fr 1fr}.stats{gap:1rem}}
+@media(max-width:360px){.tools-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- Config notice (shown until configured) -->
-<div id="config-banner">
-  ⚙ 請先設定你的 GitHub repo：點右上角「設定」輸入 <code>owner/repo</code>
-</div>
-
 <div class="page">
-
 <header>
   <div>
     <div class="logo"><span class="logo-dot"></span>AI 工具箱</div>
-    <div class="tagline">從 GitHub repo 自動讀取 · 改資料夾結構即更新</div>
+    <div class="tagline" id="tagline">設定 GitHub repo 後開始使用</div>
   </div>
   <div class="header-right">
-    <button class="icon-btn" id="refreshBtn" title="重新整理">↻ 重整</button>
-    <button class="icon-btn" id="configBtn">⚙ 設定</button>
+    <button class="btn" id="refreshBtn">↻ 重整</button>
+    <button class="btn" id="configBtn">⚙ 設定</button>
+    <button class="btn btn-primary" id="addToolBtn">＋ 新增工具</button>
   </div>
 </header>
 
 <div class="search-row">
-  <span class="search-icon">⌕</span>
-  <input class="search-input" id="searchInput" type="text" placeholder="搜尋工具名稱、描述…" autocomplete="off" />
+  <span style="color:var(--dim);font-size:15px">⌕</span>
+  <input class="search-input" id="searchInput" type="text" placeholder="搜尋工具名稱、描述…" autocomplete="off"/>
   <button class="search-clear" id="searchClear">✕</button>
 </div>
 
-<div class="stats-strip" id="statsStrip" style="display:none">
-  <div class="stat">共 <strong id="totalFolders">0</strong> 個資料夾</div>
-  <div class="stat"><strong id="totalTools">0</strong> 個工具</div>
-  <div class="stat" id="lastUpdate" style="display:none">更新於 <strong id="updateTime">—</strong></div>
+<div class="stats" id="stats" style="display:none">
+  <div>共 <strong id="totalFolders">0</strong> 個分類</div>
+  <div><strong id="totalTools">0</strong> 個工具</div>
+  <div>同步至 GitHub ✓</div>
 </div>
 
 <div id="dashboard">
-  <div class="state-box">
-    <div class="state-icon">📁</div>
-    請先點「設定」輸入你的 GitHub repo 資訊
-  </div>
+  <div class="state-box"><div class="state-icon">⚙️</div>請先點右上角「設定」<br>輸入你的 GitHub repo 和 Token</div>
+</div>
 </div>
 
-</div><!-- .page -->
+<div id="toast"></div>
 
-<!-- Config modal -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3>GitHub Repo 設定</h3>
-    <p class="modal-sub">儀表板會自動讀取你的 repo 結構來渲染工具卡片</p>
+<!-- ── 設定 Modal ── -->
+<div class="overlay" id="cfgOverlay">
+<div class="modal">
+  <div class="modal-title">GitHub Repo 設定</div>
+  <div class="modal-sub">設定一次，之後新增工具都在網頁上操作</div>
+  <div class="modal-hint">
+    <strong>Repo</strong> 填你的：<code>jasonyaaa/my-ai-tools-dashboard</code><br>
+    <strong>Token</strong> 是剛才在 GitHub 產生的 <code>ghp_xxxxx</code>（只存在你的瀏覽器）
+  </div>
+  <label class="field-label">Repo（owner/repo）</label>
+  <input class="field-input" id="cfgRepo" placeholder="jasonyaaa/my-ai-tools-dashboard"/>
+  <label class="field-label">分支（預設 main）</label>
+  <input class="field-input" id="cfgBranch" placeholder="main"/>
+  <label class="field-label">GitHub Token（ghp_xxxxx）</label>
+  <input class="field-input" id="cfgToken" type="password" placeholder="貼上你的 token，不會外洩"/>
+  <div class="modal-actions">
+    <button class="btn" id="cfgCancel">取消</button>
+    <button class="btn btn-primary" id="cfgSave">儲存並載入</button>
+  </div>
+</div>
+</div>
 
-    <label class="field-label">Repo（owner/repo）</label>
-    <input class="field-input" id="cfgRepo" placeholder="your-name/ai-tools" />
-
-    <label class="field-label">分支（留空預設 main）</label>
-    <input class="field-input" id="cfgBranch" placeholder="main" />
-
-    <label class="field-label">GitHub Token（選填，讀取私有 repo 或提高速率限制）</label>
-    <input class="field-input" id="cfgToken" type="password" placeholder="ghp_xxxx（僅儲存在瀏覽器本地）" />
-
-    <div class="modal-help">
-      <strong>Repo 結構範例：</strong><br>
-      <code>Gemini Canvas/</code> ← 資料夾名稱成為儀表板分類<br>
-      <code>&nbsp;&nbsp;寫作助手.md</code> ← 每個 .md 是一張工具卡片<br><br>
-      <strong>.md 檔案格式：</strong><br>
-      <code>url: https://gemini.google.com/canvas/xxx</code><br>
-      <code>desc: 長文撰寫、改寫</code><br>
-      <code>emoji: 🎨</code><br>
-      <code>type: gemini</code><br><br>
-      type 可選：<code>gemini</code> <code>claude</code> <code>custom</code> <code>note</code> <code>other</code>
+<!-- ── 新增/編輯工具 Modal ── -->
+<div class="overlay" id="toolOverlay">
+<div class="modal">
+  <div class="modal-title" id="toolModalTitle">新增工具</div>
+  <div class="modal-sub">填好後自動寫入 GitHub repo</div>
+  <label class="field-label">工具名稱 *</label>
+  <input class="field-input" id="tName" placeholder="例：創業計畫規劃"/>
+  <label class="field-label">工具連結 *</label>
+  <input class="field-input" id="tUrl" placeholder="https://gemini.google.com/canvas/xxx"/>
+  <label class="field-label">分類（資料夾名稱）*</label>
+  <input class="field-input" id="tFolder" placeholder="例：Gemini Canvas" list="folderList"/>
+  <datalist id="folderList"></datalist>
+  <label class="field-label">簡短說明</label>
+  <input class="field-input" id="tDesc" placeholder="這個工具是用來做什麼的"/>
+  <div class="field-row">
+    <div>
+      <label class="field-label">Emoji 圖示</label>
+      <input class="field-input" id="tEmoji" placeholder="🔗" style="margin-bottom:0"/>
     </div>
-
-    <div class="modal-actions">
-      <button class="btn-ghost" id="modalCancel">取消</button>
-      <button class="btn-primary" id="modalSave">儲存並載入</button>
+    <div>
+      <label class="field-label">類型</label>
+      <select class="field-select" id="tType" style="margin-bottom:0">
+        <option value="gemini">🟢 Gemini</option>
+        <option value="claude">🟠 Claude</option>
+        <option value="custom">🔵 自製工具</option>
+        <option value="note">🟣 筆記</option>
+        <option value="other" selected>⚫ 其他</option>
+      </select>
     </div>
   </div>
+  <div style="height:12px"></div>
+  <div class="modal-actions">
+    <button class="btn" id="toolCancel">取消</button>
+    <button class="btn btn-primary" id="toolSave">儲存到 GitHub</button>
+  </div>
+</div>
+</div>
+
+<!-- ── 新增資料夾 Modal ── -->
+<div class="overlay" id="folderOverlay">
+<div class="modal">
+  <div class="modal-title">新增分類資料夾</div>
+  <div class="modal-sub">資料夾名稱就是儀表板上的分類標題</div>
+  <label class="field-label">資料夾名稱 *</label>
+  <input class="field-input" id="fName" placeholder="例：Gemini Canvas、日常工具、自製腳本"/>
+  <div class="modal-actions">
+    <button class="btn" id="folderCancel">取消</button>
+    <button class="btn btn-primary" id="folderSave">建立</button>
+  </div>
+</div>
 </div>
 
 <script>
-/* ── Config ── */
-const STORAGE_KEY = 'aitoolbox_cfg';
-let cfg = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+/* ══════════════════════════════
+   Config
+══════════════════════════════ */
+const STORAGE = 'aitoolbox_v3';
+let cfg = JSON.parse(localStorage.getItem(STORAGE) || '{}');
+let allFolders = []; // [{name, tools:[{name,url,desc,emoji,type,sha,path}]}]
+let editingTool = null; // {folderName, toolName} when editing
 
-function saveCfg(repo, branch, token) {
-  cfg = { repo: repo.trim(), branch: (branch.trim() || 'main'), token: token.trim() };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+function saveCfg(repo,branch,token){
+  cfg={repo:repo.trim(),branch:(branch.trim()||'main'),token:token.trim()};
+  localStorage.setItem(STORAGE,JSON.stringify(cfg));
 }
 
-/* ── Modal ── */
-const overlay = document.getElementById('modalOverlay');
-const cfgRepo = document.getElementById('cfgRepo');
-const cfgBranch = document.getElementById('cfgBranch');
-const cfgToken = document.getElementById('cfgToken');
-
-function openModal() {
-  cfgRepo.value = cfg.repo || '';
-  cfgBranch.value = cfg.branch || '';
-  cfgToken.value = cfg.token || '';
-  overlay.classList.add('open');
-}
-function closeModal() { overlay.classList.remove('open'); }
-
-document.getElementById('configBtn').addEventListener('click', openModal);
-document.getElementById('modalCancel').addEventListener('click', closeModal);
-overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-document.getElementById('modalSave').addEventListener('click', () => {
-  const repo = cfgRepo.value.trim();
-  if (!repo.includes('/')) { cfgRepo.style.borderColor = '#ef4444'; return; }
-  cfgRepo.style.borderColor = '';
-  saveCfg(repo, cfgBranch.value, cfgToken.value);
-  closeModal();
-  loadDashboard();
-});
-document.getElementById('refreshBtn').addEventListener('click', () => loadDashboard(true));
-
-/* ── GitHub API ── */
-async function ghFetch(url) {
-  const headers = { Accept: 'application/vnd.github+json' };
-  if (cfg.token) headers['Authorization'] = 'Bearer ' + cfg.token;
-  const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error(`GitHub API 錯誤 ${res.status}: ${res.statusText}`);
-  return res.json();
+/* ══════════════════════════════
+   Toast
+══════════════════════════════ */
+function toast(msg,duration=2500){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),duration);
 }
 
-async function getTree() {
-  const [owner, repo] = cfg.repo.split('/');
-  const branch = cfg.branch || 'main';
-  const data = await ghFetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`);
-  return data.tree; // [{path, type, sha, url}]
+/* ══════════════════════════════
+   GitHub API helpers
+══════════════════════════════ */
+function ghHeaders(){
+  const h={'Content-Type':'application/json','Accept':'application/vnd.github+json'};
+  if(cfg.token) h['Authorization']='Bearer '+cfg.token;
+  return h;
+}
+const ghBase=()=>`https://api.github.com/repos/${cfg.repo}`;
+const rawBase=()=>`https://raw.githubusercontent.com/${cfg.repo}/${cfg.branch||'main'}/`;
+
+async function ghGet(path){
+  const r=await fetch(ghBase()+path,{headers:ghHeaders()});
+  if(!r.ok) throw new Error(`GitHub API ${r.status}`);
+  return r.json();
 }
 
-async function fetchFileContent(rawUrl) {
-  const res = await fetch(rawUrl);
-  if (!res.ok) return null;
-  return res.text();
+async function ghPut(path,body){
+  const r=await fetch(ghBase()+path,{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||`GitHub API ${r.status}`);}
+  return r.json();
 }
 
-/* Parse simple key: value frontmatter from .md */
-function parseMeta(text) {
-  const meta = {};
-  const lines = text.split('\n');
-  for (const line of lines) {
-    const m = line.match(/^(\w+)\s*:\s*(.+)/);
-    if (m) meta[m[1].trim().toLowerCase()] = m[2].trim();
+async function ghDelete(path,body){
+  const r=await fetch(ghBase()+path,{method:'DELETE',headers:ghHeaders(),body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json();throw new Error(e.message||`GitHub API ${r.status}`);}
+  return r.json();
+}
+
+function encodeMd(tool){
+  const content=`url: ${tool.url}\ndesc: ${tool.desc||''}\nemoji: ${tool.emoji||'🔗'}\ntype: ${tool.type||'other'}\n`;
+  return btoa(unescape(encodeURIComponent(content)));
+}
+
+/* ══════════════════════════════
+   Load from GitHub
+══════════════════════════════ */
+async function loadDashboard(){
+  if(!cfg.repo){openCfg();return;}
+  setDash('<div class="state-box"><div class="state-icon"><span class="spinner"></span></div>從 GitHub 讀取中…</div>');
+  document.getElementById('stats').style.display='none';
+  try{
+    const tree=await ghGet(`/git/trees/${cfg.branch||'main'}?recursive=1`);
+    const mdFiles=tree.tree.filter(f=>f.type==='blob'&&f.path.includes('/')&&f.path.endsWith('.md')&&!f.path.toLowerCase().includes('readme'));
+    const folders={};
+    for(const f of mdFiles){
+      const parts=f.path.split('/');
+      const folder=parts[0];
+      const toolName=parts[parts.length-1].replace(/\.md$/i,'');
+      if(!folders[folder])folders[folder]=[];
+      folders[folder].push({toolName,path:f.path});
+    }
+    // fetch file contents in parallel
+    allFolders=[];
+    for(const [folderName,items] of Object.entries(folders)){
+      const tools=await Promise.all(items.map(async({toolName,path})=>{
+        try{
+          const res=await fetch(rawBase()+path+'?v='+Date.now());
+          const text=await res.text();
+          const meta=parseMeta(text);
+          // get sha for later editing/deleting
+          const fileInfo=await ghGet(`/contents/${encodeURIComponent(path)}`);
+          return{name:toolName,path,...meta,sha:fileInfo.sha};
+        }catch{
+          return{name:toolName,path,url:'#',desc:'',emoji:'🔗',type:'other',sha:''};
+        }
+      }));
+      allFolders.push({name:folderName,tools});
+    }
+    renderAll();
+    updateFolderDatalist();
+    document.getElementById('tagline').textContent=`${cfg.repo} · ${cfg.branch||'main'}`;
+  }catch(err){
+    setDash(`<div class="state-box"><div class="state-icon">⚠️</div>讀取失敗：${err.message}<br><br><button class="btn" onclick="openCfg()">⚙ 重新設定</button></div>`);
+  }
+}
+
+function parseMeta(text){
+  const meta={};
+  for(const line of text.split('\n')){
+    const m=line.match(/^(\w+)\s*:\s*(.+)/);
+    if(m)meta[m[1].toLowerCase()]=m[2].trim();
   }
   return meta;
 }
 
-/* ── Build folder structure from tree ── */
-async function buildFolders(tree) {
-  // Only care about .md files not at root (skip README etc)
-  const mdFiles = tree.filter(item =>
-    item.type === 'blob' &&
-    item.path.includes('/') &&
-    item.path.endsWith('.md') &&
-    !item.path.toLowerCase().startsWith('readme')
-  );
+/* ══════════════════════════════
+   Render
+══════════════════════════════ */
+const TYPE_LABEL={gemini:'Gemini',claude:'Claude',custom:'自製',note:'筆記',other:'其他'};
 
-  // Group by first path segment (= folder)
-  const folders = {};
-  for (const file of mdFiles) {
-    const parts = file.path.split('/');
-    const folderName = parts[0];
-    const toolName = parts[parts.length - 1].replace(/\.md$/i, '');
-    if (!folders[folderName]) folders[folderName] = [];
-    folders[folderName].push({ toolName, file });
-  }
-
-  // Fetch each file's content in parallel (batched)
-  const [owner, repo] = cfg.repo.split('/');
-  const branch = cfg.branch || 'main';
-  const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/`;
-
-  const result = [];
-  for (const [folderName, items] of Object.entries(folders)) {
-    const tools = await Promise.all(items.map(async ({ toolName, file }) => {
-      try {
-        const text = await fetchFileContent(rawBase + file.path);
-        const meta = parseMeta(text || '');
-        return {
-          name: toolName,
-          url: meta.url || '#',
-          desc: meta.desc || meta.description || '',
-          emoji: meta.emoji || '🔗',
-          type: meta.type || 'other',
-        };
-      } catch {
-        return { name: toolName, url: '#', desc: '', emoji: '🔗', type: 'other' };
-      }
-    }));
-    result.push({ name: folderName, tools });
-  }
-
-  return result;
-}
-
-/* ── Render ── */
-const TYPE_LABEL = { gemini: 'Gemini', claude: 'Claude', custom: '自製', note: '筆記', other: '其他' };
-
-function renderCard(tool) {
-  const type = tool.type || 'other';
-  const label = TYPE_LABEL[type] || type;
-  const a = document.createElement('a');
-  a.className = 'tool-card';
-  a.href = tool.url !== '#' ? tool.url : 'javascript:void(0)';
-  if (tool.url !== '#') { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
-  a.dataset.search = (tool.name + ' ' + tool.desc + ' ' + label).toLowerCase();
-  a.innerHTML = `
-    <div class="card-top">
-      <div class="card-emoji">${tool.emoji}</div>
-      <div class="card-name">${tool.name}</div>
-    </div>
-    <div class="card-desc">${tool.desc || '<span style="color:var(--dim)">—</span>'}</div>
-    <div class="card-foot">
-      <span class="type-badge badge-${type}">${label}</span>
-      ${tool.url !== '#' ? '<span class="card-arrow">↗</span>' : ''}
-    </div>`;
-  return a;
-}
-
-function renderFolders(folders) {
-  const dash = document.getElementById('dashboard');
-  dash.innerHTML = '';
-
-  if (!folders.length) {
-    dash.innerHTML = `<div class="state-box"><div class="state-icon">📭</div>
-      Repo 裡沒有找到工具檔案。<br>
-      請在資料夾裡放 <code>.md</code> 檔案，格式：<code>url: https://…</code>
-    </div>`;
+function renderAll(){
+  const dash=document.getElementById('dashboard');
+  dash.innerHTML='';
+  if(!allFolders.length){
+    dash.innerHTML='<div class="state-box"><div class="state-icon">📭</div>還沒有工具，點「＋ 新增工具」開始！</div>';
     return;
   }
-
-  let totalTools = 0;
-  folders.forEach((folder, idx) => {
-    totalTools += folder.tools.length;
-    const section = document.createElement('div');
-    section.className = 'folder';
-    section.dataset.folder = folder.name.toLowerCase();
-
-    const head = document.createElement('div');
-    head.className = 'folder-head';
-    head.innerHTML = `
-      <span class="f-icon">▸</span>
-      <span class="folder-label">${folder.name}</span>
-      <span class="f-count">${folder.tools.length}</span>
-      <span class="f-chevron">▾</span>`;
-
-    const gridWrap = document.createElement('div');
-    gridWrap.className = 'folder-grid-wrap';
-    const grid = document.createElement('div');
-    grid.className = 'tools-grid';
-    folder.tools.forEach(t => grid.appendChild(renderCard(t)));
-    gridWrap.appendChild(grid);
-
-    head.addEventListener('click', () => {
-      const collapsed = gridWrap.classList.toggle('collapsed');
-      head.classList.toggle('collapsed', collapsed);
-    });
-
-    section.appendChild(head);
-    section.appendChild(gridWrap);
-    dash.appendChild(section);
+  let totalTools=0;
+  allFolders.forEach(folder=>{
+    totalTools+=folder.tools.length;
+    dash.appendChild(buildFolder(folder));
   });
-
-  // Stats
-  document.getElementById('totalFolders').textContent = folders.length;
-  document.getElementById('totalTools').textContent = totalTools;
-  document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-  document.getElementById('statsStrip').style.display = 'flex';
-  document.getElementById('lastUpdate').style.display = '';
+  // add-folder bar
+  const bar=document.createElement('div');
+  bar.className='add-folder-bar';
+  bar.innerHTML='＋ 新增分類資料夾';
+  bar.onclick=openFolderModal;
+  dash.appendChild(bar);
+  document.getElementById('totalFolders').textContent=allFolders.length;
+  document.getElementById('totalTools').textContent=totalTools;
+  document.getElementById('stats').style.display='flex';
 }
 
-/* ── Search ── */
-const searchInput = document.getElementById('searchInput');
-const searchClear = document.getElementById('searchClear');
-
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.trim().toLowerCase();
-  searchClear.classList.toggle('visible', !!q);
-  filterAll(q);
-});
-searchClear.addEventListener('click', () => {
-  searchInput.value = '';
-  searchClear.classList.remove('visible');
-  filterAll('');
-});
-
-function filterAll(q) {
-  document.querySelectorAll('.folder').forEach(folder => {
-    const cards = folder.querySelectorAll('.tool-card');
-    let shown = 0;
-    cards.forEach(c => {
-      const match = !q || c.dataset.search.includes(q);
-      c.style.display = match ? '' : 'none';
-      if (match) shown++;
-    });
-    folder.style.display = shown ? '' : 'none';
-    if (shown) folder.querySelector('.folder-grid-wrap').classList.remove('collapsed');
+function buildFolder(folder){
+  const sec=document.createElement('div');
+  sec.className='folder';
+  sec.dataset.folder=folder.name.toLowerCase();
+  const head=document.createElement('div');
+  head.className='folder-head';
+  head.innerHTML=`
+    <span class="f-chevron">▾</span>
+    <span class="folder-label">${folder.name}</span>
+    <span class="f-count">${folder.tools.length}</span>
+    <button class="f-add" title="在此資料夾新增工具" onclick="openAddInFolder(event,'${folder.name}')">＋</button>
+    <button class="f-delete" title="刪除此分類（需先移除所有工具）" onclick="deleteFolder(event,'${folder.name}')">刪除</button>`;
+  const wrap=document.createElement('div');
+  wrap.className='grid-wrap';
+  const grid=document.createElement('div');
+  grid.className='tools-grid';
+  folder.tools.forEach(t=>grid.appendChild(buildCard(t,folder.name)));
+  wrap.appendChild(grid);
+  head.querySelector('.f-chevron').addEventListener('click',()=>{
+    const c=wrap.classList.toggle('collapsed');
+    head.classList.toggle('collapsed',c);
   });
+  sec.appendChild(head);
+  sec.appendChild(wrap);
+  return sec;
 }
 
-/* ── Load ── */
-async function loadDashboard(force = false) {
-  if (!cfg.repo) { openModal(); return; }
-  document.getElementById('config-banner').classList.add('hidden');
-
-  const dash = document.getElementById('dashboard');
-  dash.innerHTML = `<div class="state-box"><div class="state-icon">⏳</div>從 GitHub 讀取 repo 結構…</div>`;
-  document.getElementById('statsStrip').style.display = 'none';
-
-  try {
-    const tree = await getTree();
-    const folders = await buildFolders(tree);
-    renderFolders(folders);
-  } catch (err) {
-    dash.innerHTML = `<div class="state-box">
-      <div class="state-icon">⚠️</div>
-      讀取失敗：${err.message}<br><br>
-      <button class="icon-btn" onclick="openModal()" style="margin:auto">⚙ 重新設定</button>
+function buildCard(tool,folderName){
+  const type=tool.type||'other';
+  const label=TYPE_LABEL[type]||type;
+  const card=document.createElement('div');
+  card.className='tool-card';
+  card.dataset.search=(tool.name+' '+(tool.desc||'')+' '+label).toLowerCase();
+  card.innerHTML=`
+    <div class="card-top">
+      <div class="card-emoji">${tool.emoji||'🔗'}</div>
+      <div class="card-name">${tool.name}</div>
+    </div>
+    <div class="card-desc">${tool.desc||'<span style="color:var(--dim)">—</span>'}</div>
+    <div class="card-foot">
+      <span class="type-badge badge-${type}">${label}</span>
+      <div class="card-actions">
+        <button class="card-act" onclick="editTool(event,'${folderName}','${tool.name}')">編輯</button>
+        <button class="card-act del" onclick="deleteTool(event,'${folderName}','${tool.name}')">刪除</button>
+      </div>
+      ${tool.url&&tool.url!=='#'?`<a class="card-link" href="${tool.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗</a>`:''}
     </div>`;
-    document.getElementById('config-banner').classList.remove('hidden');
+  if(tool.url&&tool.url!=='#'){
+    card.style.cursor='pointer';
+    card.addEventListener('click',e=>{
+      if(e.target.closest('.card-actions')||e.target.closest('.card-link'))return;
+      window.open(tool.url,'_blank','noopener');
+    });
   }
+  return card;
 }
 
-/* ── Init ── */
-if (cfg.repo) {
-  document.getElementById('config-banner').classList.add('hidden');
-  loadDashboard();
-} else {
-  // Show banner
+function setDash(html){document.getElementById('dashboard').innerHTML=html;}
+
+/* ══════════════════════════════
+   Search
+══════════════════════════════ */
+document.getElementById('searchInput').addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('show',!!q);
+  document.querySelectorAll('.folder').forEach(f=>{
+    const cards=f.querySelectorAll('.tool-card');
+    let shown=0;
+    cards.forEach(c=>{const m=!q||c.dataset.search.includes(q);c.style.display=m?'':'none';if(m)shown++;});
+    f.style.display=shown?'':'none';
+    if(shown)f.querySelector('.grid-wrap').classList.remove('collapsed');
+  });
+});
+document.getElementById('searchClear').addEventListener('click',()=>{
+  document.getElementById('searchInput').value='';
+  document.getElementById('searchClear').classList.remove('show');
+  document.querySelectorAll('.tool-card,.folder').forEach(el=>el.style.display='');
+});
+
+/* ══════════════════════════════
+   Config Modal
+══════════════════════════════ */
+function openCfg(){
+  document.getElementById('cfgRepo').value=cfg.repo||'jasonyaaa/my-ai-tools-dashboard';
+  document.getElementById('cfgBranch').value=cfg.branch||'';
+  document.getElementById('cfgToken').value=cfg.token||'';
+  document.getElementById('cfgOverlay').classList.add('open');
 }
+function closeCfg(){document.getElementById('cfgOverlay').classList.remove('open');}
+document.getElementById('configBtn').addEventListener('click',openCfg);
+document.getElementById('cfgCancel').addEventListener('click',closeCfg);
+document.getElementById('cfgOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('cfgOverlay'))closeCfg();});
+document.getElementById('cfgSave').addEventListener('click',()=>{
+  const repo=document.getElementById('cfgRepo').value.trim();
+  if(!repo.includes('/')){document.getElementById('cfgRepo').style.borderColor='#ef4444';return;}
+  saveCfg(repo,document.getElementById('cfgBranch').value,document.getElementById('cfgToken').value);
+  closeCfg();
+  loadDashboard();
+});
+
+/* ══════════════════════════════
+   Tool Modal (add / edit)
+══════════════════════════════ */
+function openToolModal(opts={}){
+  editingTool=opts.editing||null;
+  document.getElementById('toolModalTitle').textContent=editingTool?'編輯工具':'新增工具';
+  document.getElementById('tName').value=opts.name||'';
+  document.getElementById('tUrl').value=opts.url||'';
+  document.getElementById('tFolder').value=opts.folder||'';
+  document.getElementById('tDesc').value=opts.desc||'';
+  document.getElementById('tEmoji').value=opts.emoji||'';
+  document.getElementById('tType').value=opts.type||'other';
+  document.getElementById('tName').disabled=!!editingTool;
+  document.getElementById('tFolder').disabled=!!editingTool;
+  document.getElementById('toolOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById(editingTool?'tUrl':'tName').focus(),100);
+}
+function closeToolModal(){document.getElementById('toolOverlay').classList.remove('open');editingTool=null;}
+
+document.getElementById('addToolBtn').addEventListener('click',()=>openToolModal());
+document.getElementById('toolCancel').addEventListener('click',closeToolModal);
+document.getElementById('toolOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('toolOverlay'))closeToolModal();});
+
+function openAddInFolder(e,folderName){
+  e.stopPropagation();
+  openToolModal({folder:folderName});
+}
+
+document.getElementById('toolSave').addEventListener('click',async()=>{
+  const name=document.getElementById('tName').value.trim();
+  const url=document.getElementById('tUrl').value.trim();
+  const folder=document.getElementById('tFolder').value.trim();
+  if(!name||!url||!folder){toast('⚠️ 名稱、連結、分類都必填');return;}
+  const tool={name,url,desc:document.getElementById('tDesc').value.trim(),emoji:document.getElementById('tEmoji').value.trim()||'🔗',type:document.getElementById('tType').value};
+  const btn=document.getElementById('toolSave');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>儲存中…';
+  try{
+    await writeTool(folder,tool);
+    closeToolModal();
+    toast('✓ 已儲存到 GitHub');
+    await loadDashboard();
+  }catch(err){
+    toast('❌ 儲存失敗：'+err.message,4000);
+  }finally{
+    btn.disabled=false;btn.textContent='儲存到 GitHub';
+  }
+});
+
+async function writeTool(folderName,tool,oldSha){
+  const path=`${folderName}/${tool.name}.md`;
+  const body={message:`${oldSha?'edit':'add'}: ${tool.name}`,content:encodeMd(tool),branch:cfg.branch||'main'};
+  if(oldSha)body.sha=oldSha;
+  await ghPut(`/contents/${encodeURIComponent(folderName)}/${encodeURIComponent(tool.name+'.md')}`,body);
+}
+
+/* ══════════════════════════════
+   Edit tool
+══════════════════════════════ */
+function editTool(e,folderName,toolName){
+  e.stopPropagation();
+  const folder=allFolders.find(f=>f.name===folderName);
+  if(!folder)return;
+  const tool=folder.tools.find(t=>t.name===toolName);
+  if(!tool)return;
+  openToolModal({editing:{folderName,toolName,sha:tool.sha},name:tool.name,url:tool.url,folder:folderName,desc:tool.desc,emoji:tool.emoji,type:tool.type});
+  // override save to use sha
+  document.getElementById('toolSave').onclick=async()=>{
+    const url=document.getElementById('tUrl').value.trim();
+    const desc=document.getElementById('tDesc').value.trim();
+    const emoji=document.getElementById('tEmoji').value.trim()||'🔗';
+    const type=document.getElementById('tType').value;
+    const btn=document.getElementById('toolSave');
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span>儲存中…';
+    try{
+      await writeTool(folderName,{name:toolName,url,desc,emoji,type},tool.sha);
+      closeToolModal();
+      toast('✓ 已更新');
+      await loadDashboard();
+    }catch(err){toast('❌ 更新失敗：'+err.message,4000);}
+    finally{btn.disabled=false;btn.textContent='儲存到 GitHub';btn.onclick=null;}
+  };
+}
+
+/* ══════════════════════════════
+   Delete tool
+══════════════════════════════ */
+async function deleteTool(e,folderName,toolName){
+  e.stopPropagation();
+  if(!confirm(`確定刪除「${toolName}」？`))return;
+  const folder=allFolders.find(f=>f.name===folderName);
+  const tool=folder?.tools.find(t=>t.name===toolName);
+  if(!tool?.sha){toast('❌ 找不到 SHA，請重整後再試');return;}
+  try{
+    await ghDelete(`/contents/${encodeURIComponent(folderName)}/${encodeURIComponent(toolName+'.md')}`,{message:`delete: ${toolName}`,sha:tool.sha,branch:cfg.branch||'main'});
+    toast('✓ 已刪除');
+    await loadDashboard();
+  }catch(err){toast('❌ 刪除失敗：'+err.message,4000);}
+}
+
+/* ══════════════════════════════
+   Folder Modal
+══════════════════════════════ */
+function openFolderModal(){document.getElementById('fName').value='';document.getElementById('folderOverlay').classList.add('open');setTimeout(()=>document.getElementById('fName').focus(),100);}
+function closeFolderModal(){document.getElementById('folderOverlay').classList.remove('open');}
+document.getElementById('folderCancel').addEventListener('click',closeFolderModal);
+document.getElementById('folderOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('folderOverlay'))closeFolderModal();});
+document.getElementById('folderSave').addEventListener('click',async()=>{
+  const name=document.getElementById('fName').value.trim();
+  if(!name){toast('⚠️ 請輸入資料夾名稱');return;}
+  // Create a placeholder .gitkeep so folder exists
+  const btn=document.getElementById('folderSave');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>建立中…';
+  try{
+    await ghPut(`/contents/${encodeURIComponent(name)}/.gitkeep`,{message:`create folder: ${name}`,content:btoa(''),branch:cfg.branch||'main'});
+    closeFolderModal();
+    toast('✓ 資料夾已建立，現在可以新增工具');
+    await loadDashboard();
+  }catch(err){toast('❌ 建立失敗：'+err.message,4000);}
+  finally{btn.disabled=false;btn.textContent='建立';}
+});
+
+/* ══════════════════════════════
+   Delete folder
+══════════════════════════════ */
+async function deleteFolder(e,folderName){
+  e.stopPropagation();
+  const folder=allFolders.find(f=>f.name===folderName);
+  if(folder?.tools.length){toast('⚠️ 請先刪除此分類內所有工具');return;}
+  if(!confirm(`確定刪除分類「${folderName}」？`))return;
+  try{
+    const info=await ghGet(`/contents/${encodeURIComponent(folderName)}/.gitkeep`);
+    await ghDelete(`/contents/${encodeURIComponent(folderName)}/.gitkeep`,{message:`delete folder: ${folderName}`,sha:info.sha,branch:cfg.branch||'main'});
+    toast('✓ 分類已刪除');
+    await loadDashboard();
+  }catch{toast('❌ 刪除失敗，資料夾可能不是空的');}
+}
+
+/* ══════════════════════════════
+   Datalist (folder autocomplete)
+══════════════════════════════ */
+function updateFolderDatalist(){
+  const dl=document.getElementById('folderList');
+  dl.innerHTML=allFolders.map(f=>`<option value="${f.name}">`).join('');
+}
+
+/* ══════════════════════════════
+   Init
+══════════════════════════════ */
+document.getElementById('refreshBtn').addEventListener('click',()=>loadDashboard());
+if(cfg.repo)loadDashboard();
 </script>
 </body>
 </html>
