@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 工具箱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #f7f6f3;
+  --surface:   #ffffff;
+  --surface2:  #f0eeea;
+  --border:    #e4e1db;
+  --border2:   #ccc9c1;
+  --text:      #1a1917;
+  --muted:     #6b6860;
+  --dim:       #a8a49d;
+  --font:      'DM Sans', sans-serif;
+  --mono:      'DM Mono', monospace;
+  --r:         10px;
+  --r-lg:      14px;
+
+  /* type accent colours */
+  --c-gemini:  #16a34a;
+  --c-claude:  #c2410c;
+  --c-custom:  #1d4ed8;
+  --c-note:    #7c3aed;
+  --c-other:   #374151;
+
+  --bg-gemini: #f0fdf4;
+  --bg-claude: #fff7ed;
+  --bg-custom: #eff6ff;
+  --bg-note:   #f5f3ff;
+  --bg-other:  #f9fafb;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Config banner ── */
+#config-banner {
+  background: #fefce8;
+  border-bottom: 1px solid #fde68a;
+  padding: 10px 2rem;
+  font-size: 13px;
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#config-banner code {
+  font-family: var(--mono);
+  background: #fde68a55;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+#config-banner.hidden { display: none; }
+
+/* ── Layout ── */
+.page { max-width: 960px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 2.5rem 0 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.logo {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.logo-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--c-gemini);
+  margin-right: 7px;
+  vertical-align: middle;
+  position: relative; top: -1px;
+}
+.tagline { font-size: 13px; color: var(--muted); }
+
+.header-right { display: flex; gap: 8px; }
+.icon-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 13px;
+  font-size: 12px; font-family: var(--font);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.icon-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── Search ── */
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 9px 14px;
+  margin-bottom: 2rem;
+  transition: border-color .15s;
+}
+.search-row:focus-within { border-color: var(--border2); }
+.search-icon { color: var(--dim); font-size: 15px; flex-shrink: 0; }
+.search-input {
+  flex: 1; border: none; outline: none; background: none;
+  font-family: var(--font); font-size: 14px; color: var(--text);
+}
+.search-input::placeholder { color: var(--dim); }
+.search-clear {
+  font-size: 13px; color: var(--dim); cursor: pointer;
+  display: none; background: none; border: none; padding: 0;
+  font-family: var(--font);
+}
+.search-clear.visible { display: block; }
+.search-clear:hover { color: var(--muted); }
+
+/* ── Stats strip ── */
+.stats-strip {
+  display: flex; gap: 1.5rem; margin-bottom: 1.75rem;
+  font-size: 13px; color: var(--muted);
+}
+.stat { display: flex; align-items: center; gap: 5px; }
+.stat strong { color: var(--text); font-weight: 500; }
+
+/* ── Folder ── */
+.folder { margin-bottom: 1.75rem; }
+.folder-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.folder-head:hover .folder-label { color: var(--text); }
+.f-icon { font-size: 14px; color: var(--dim); }
+.folder-label { font-size: 12px; font-weight: 500; color: var(--muted); flex: 1; letter-spacing: 0.4px; text-transform: uppercase; }
+.f-count {
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 1px 7px; border-radius: 20px;
+}
+.f-chevron { font-size: 13px; color: var(--dim); transition: transform .2s; display: inline-block; }
+.folder-head.collapsed .f-chevron { transform: rotate(-90deg); }
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+.folder-grid-wrap { overflow: hidden; transition: opacity .15s; }
+.folder-grid-wrap.collapsed { display: none; }
+
+/* ── Tool card ── */
+.tool-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 15px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+  position: relative;
+}
+.tool-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.card-emoji {
+  width: 34px; height: 34px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+  background: var(--surface2);
+}
+.card-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; padding-top: 2px; }
+.card-desc { font-size: 12px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; min-height: 32px; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; }
+.type-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  padding: 2px 8px; border-radius: 20px; border: 1px solid;
+}
+.badge-gemini { color: var(--c-gemini); border-color: #bbf7d0; background: var(--bg-gemini); }
+.badge-claude  { color: var(--c-claude);  border-color: #fed7aa; background: var(--bg-claude);  }
+.badge-custom  { color: var(--c-custom);  border-color: #bfdbfe; background: var(--bg-custom);  }
+.badge-note    { color: var(--c-note);    border-color: #ddd6fe; background: var(--bg-note);    }
+.badge-other   { color: var(--c-other);   border-color: #d1d5db; background: var(--bg-other);   }
+.card-arrow { font-size: 13px; color: var(--dim); }
+.tool-card:hover .card-arrow { color: var(--muted); }
+
+/* ── Empty / loading / error ── */
+.state-box {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.state-box .state-icon { font-size: 28px; margin-bottom: 12px; }
+.state-box code { font-family: var(--mono); font-size: 12px; background: var(--surface2); padding: 2px 8px; border-radius: 4px; }
+
+/* ── Config modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 1.75rem;
+  width: 460px; max-width: 90vw;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+}
+.modal h3 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; }
+.field-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 5px; display: block; }
+.field-input {
+  width: 100%; padding: 8px 12px; font-family: var(--mono);
+  font-size: 13px; border: 1px solid var(--border); border-radius: var(--r);
+  outline: none; background: var(--bg); color: var(--text); margin-bottom: 1rem;
+}
+.field-input:focus { border-color: var(--border2); }
+.modal-help {
+  font-size: 12px; color: var(--muted); line-height: 1.7;
+  background: var(--surface2); border-radius: var(--r);
+  padding: 10px 12px; margin-bottom: 1.25rem;
+}
+.modal-help code { font-family: var(--mono); color: var(--text); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.btn-primary {
+  padding: 8px 18px; font-family: var(--font); font-size: 13px;
+  background: var(--text); color: var(--bg);
+  border: none; border-radius: var(--r); cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .85; }
+.btn-ghost {
+  padding: 8px 14px; font-family: var(--font); font-size: 13px;
+  background: none; color: var(--muted);
+  border: 1px solid var(--border); border-radius: var(--r); cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .tools-grid { grid-template-columns: 1fr 1fr; }
+  .stats-strip { gap: 1rem; }
+}
+@media (max-width: 360px) {
+  .tools-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Config notice (shown until configured) -->
+<div id="config-banner">
+  ⚙ 請先設定你的 GitHub repo：點右上角「設定」輸入 <code>owner/repo</code>
+</div>
+
+<div class="page">
+
+<header>
+  <div>
+    <div class="logo"><span class="logo-dot"></span>AI 工具箱</div>
+    <div class="tagline">從 GitHub repo 自動讀取 · 改資料夾結構即更新</div>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" id="refreshBtn" title="重新整理">↻ 重整</button>
+    <button class="icon-btn" id="configBtn">⚙ 設定</button>
+  </div>
+</header>
+
+<div class="search-row">
+  <span class="search-icon">⌕</span>
+  <input class="search-input" id="searchInput" type="text" placeholder="搜尋工具名稱、描述…" autocomplete="off" />
+  <button class="search-clear" id="searchClear">✕</button>
+</div>
+
+<div class="stats-strip" id="statsStrip" style="display:none">
+  <div class="stat">共 <strong id="totalFolders">0</strong> 個資料夾</div>
+  <div class="stat"><strong id="totalTools">0</strong> 個工具</div>
+  <div class="stat" id="lastUpdate" style="display:none">更新於 <strong id="updateTime">—</strong></div>
+</div>
+
+<div id="dashboard">
+  <div class="state-box">
+    <div class="state-icon">📁</div>
+    請先點「設定」輸入你的 GitHub repo 資訊
+  </div>
+</div>
+
+</div><!-- .page -->
+
+<!-- Config modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>GitHub Repo 設定</h3>
+    <p class="modal-sub">儀表板會自動讀取你的 repo 結構來渲染工具卡片</p>
+
+    <label class="field-label">Repo（owner/repo）</label>
+    <input class="field-input" id="cfgRepo" placeholder="your-name/ai-tools" />
+
+    <label class="field-label">分支（留空預設 main）</label>
+    <input class="field-input" id="cfgBranch" placeholder="main" />
+
+    <label class="field-label">GitHub Token（選填，讀取私有 repo 或提高速率限制）</label>
+    <input class="field-input" id="cfgToken" type="password" placeholder="ghp_xxxx（僅儲存在瀏覽器本地）" />
+
+    <div class="modal-help">
+      <strong>Repo 結構範例：</strong><br>
+      <code>Gemini Canvas/</code> ← 資料夾名稱成為儀表板分類<br>
+      <code>&nbsp;&nbsp;寫作助手.md</code> ← 每個 .md 是一張工具卡片<br><br>
+      <strong>.md 檔案格式：</strong><br>
+      <code>url: https://gemini.google.com/canvas/xxx</code><br>
+      <code>desc: 長文撰寫、改寫</code><br>
+      <code>emoji: 🎨</code><br>
+      <code>type: gemini</code><br><br>
+      type 可選：<code>gemini</code> <code>claude</code> <code>custom</code> <code>note</code> <code>other</code>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="modalCancel">取消</button>
+      <button class="btn-primary" id="modalSave">儲存並載入</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Config ── */
+const STORAGE_KEY = 'aitoolbox_cfg';
+let cfg = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+function saveCfg(repo, branch, token) {
+  cfg = { repo: repo.trim(), branch: (branch.trim() || 'main'), token: token.trim() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+}
+
+/* ── Modal ── */
+const overlay = document.getElementById('modalOverlay');
+const cfgRepo = document.getElementById('cfgRepo');
+const cfgBranch = document.getElementById('cfgBranch');
+const cfgToken = document.getElementById('cfgToken');
+
+function openModal() {
+  cfgRepo.value = cfg.repo || '';
+  cfgBranch.value = cfg.branch || '';
+  cfgToken.value = cfg.token || '';
+  overlay.classList.add('open');
+}
+function closeModal() { overlay.classList.remove('open'); }
+
+document.getElementById('configBtn').addEventListener('click', openModal);
+document.getElementById('modalCancel').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.getElementById('modalSave').addEventListener('click', () => {
+  const repo = cfgRepo.value.trim();
+  if (!repo.includes('/')) { cfgRepo.style.borderColor = '#ef4444'; return; }
+  cfgRepo.style.borderColor = '';
+  saveCfg(repo, cfgBranch.value, cfgToken.value);
+  closeModal();
+  loadDashboard();
+});
+document.getElementById('refreshBtn').addEventListener('click', () => loadDashboard(true));
+
+/* ── GitHub API ── */
+async function ghFetch(url) {
+  const headers = { Accept: 'application/vnd.github+json' };
+  if (cfg.token) headers['Authorization'] = 'Bearer ' + cfg.token;
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`GitHub API 錯誤 ${res.status}: ${res.statusText}`);
+  return res.json();
+}
+
+async function getTree() {
+  const [owner, repo] = cfg.repo.split('/');
+  const branch = cfg.branch || 'main';
+  const data = await ghFetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`);
+  return data.tree; // [{path, type, sha, url}]
+}
+
+async function fetchFileContent(rawUrl) {
+  const res = await fetch(rawUrl);
+  if (!res.ok) return null;
+  return res.text();
+}
+
+/* Parse simple key: value frontmatter from .md */
+function parseMeta(text) {
+  const meta = {};
+  const lines = text.split('\n');
+  for (const line of lines) {
+    const m = line.match(/^(\w+)\s*:\s*(.+)/);
+    if (m) meta[m[1].trim().toLowerCase()] = m[2].trim();
+  }
+  return meta;
+}
+
+/* ── Build folder structure from tree ── */
+async function buildFolders(tree) {
+  // Only care about .md files not at root (skip README etc)
+  const mdFiles = tree.filter(item =>
+    item.type === 'blob' &&
+    item.path.includes('/') &&
+    item.path.endsWith('.md') &&
+    !item.path.toLowerCase().startsWith('readme')
+  );
+
+  // Group by first path segment (= folder)
+  const folders = {};
+  for (const file of mdFiles) {
+    const parts = file.path.split('/');
+    const folderName = parts[0];
+    const toolName = parts[parts.length - 1].replace(/\.md$/i, '');
+    if (!folders[folderName]) folders[folderName] = [];
+    folders[folderName].push({ toolName, file });
+  }
+
+  // Fetch each file's content in parallel (batched)
+  const [owner, repo] = cfg.repo.split('/');
+  const branch = cfg.branch || 'main';
+  const rawBase = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/`;
+
+  const result = [];
+  for (const [folderName, items] of Object.entries(folders)) {
+    const tools = await Promise.all(items.map(async ({ toolName, file }) => {
+      try {
+        const text = await fetchFileContent(rawBase + file.path);
+        const meta = parseMeta(text || '');
+        return {
+          name: toolName,
+          url: meta.url || '#',
+          desc: meta.desc || meta.description || '',
+          emoji: meta.emoji || '🔗',
+          type: meta.type || 'other',
+        };
+      } catch {
+        return { name: toolName, url: '#', desc: '', emoji: '🔗', type: 'other' };
+      }
+    }));
+    result.push({ name: folderName, tools });
+  }
+
+  return result;
+}
+
+/* ── Render ── */
+const TYPE_LABEL = { gemini: 'Gemini', claude: 'Claude', custom: '自製', note: '筆記', other: '其他' };
+
+function renderCard(tool) {
+  const type = tool.type || 'other';
+  const label = TYPE_LABEL[type] || type;
+  const a = document.createElement('a');
+  a.className = 'tool-card';
+  a.href = tool.url !== '#' ? tool.url : 'javascript:void(0)';
+  if (tool.url !== '#') { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  a.dataset.search = (tool.name + ' ' + tool.desc + ' ' + label).toLowerCase();
+  a.innerHTML = `
+    <div class="card-top">
+      <div class="card-emoji">${tool.emoji}</div>
+      <div class="card-name">${tool.name}</div>
+    </div>
+    <div class="card-desc">${tool.desc || '<span style="color:var(--dim)">—</span>'}</div>
+    <div class="card-foot">
+      <span class="type-badge badge-${type}">${label}</span>
+      ${tool.url !== '#' ? '<span class="card-arrow">↗</span>' : ''}
+    </div>`;
+  return a;
+}
+
+function renderFolders(folders) {
+  const dash = document.getElementById('dashboard');
+  dash.innerHTML = '';
+
+  if (!folders.length) {
+    dash.innerHTML = `<div class="state-box"><div class="state-icon">📭</div>
+      Repo 裡沒有找到工具檔案。<br>
+      請在資料夾裡放 <code>.md</code> 檔案，格式：<code>url: https://…</code>
+    </div>`;
+    return;
+  }
+
+  let totalTools = 0;
+  folders.forEach((folder, idx) => {
+    totalTools += folder.tools.length;
+    const section = document.createElement('div');
+    section.className = 'folder';
+    section.dataset.folder = folder.name.toLowerCase();
+
+    const head = document.createElement('div');
+    head.className = 'folder-head';
+    head.innerHTML = `
+      <span class="f-icon">▸</span>
+      <span class="folder-label">${folder.name}</span>
+      <span class="f-count">${folder.tools.length}</span>
+      <span class="f-chevron">▾</span>`;
+
+    const gridWrap = document.createElement('div');
+    gridWrap.className = 'folder-grid-wrap';
+    const grid = document.createElement('div');
+    grid.className = 'tools-grid';
+    folder.tools.forEach(t => grid.appendChild(renderCard(t)));
+    gridWrap.appendChild(grid);
+
+    head.addEventListener('click', () => {
+      const collapsed = gridWrap.classList.toggle('collapsed');
+      head.classList.toggle('collapsed', collapsed);
+    });
+
+    section.appendChild(head);
+    section.appendChild(gridWrap);
+    dash.appendChild(section);
+  });
+
+  // Stats
+  document.getElementById('totalFolders').textContent = folders.length;
+  document.getElementById('totalTools').textContent = totalTools;
+  document.getElementById('updateTime').textContent = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('statsStrip').style.display = 'flex';
+  document.getElementById('lastUpdate').style.display = '';
+}
+
+/* ── Search ── */
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  searchClear.classList.toggle('visible', !!q);
+  filterAll(q);
+});
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClear.classList.remove('visible');
+  filterAll('');
+});
+
+function filterAll(q) {
+  document.querySelectorAll('.folder').forEach(folder => {
+    const cards = folder.querySelectorAll('.tool-card');
+    let shown = 0;
+    cards.forEach(c => {
+      const match = !q || c.dataset.search.includes(q);
+      c.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    folder.style.display = shown ? '' : 'none';
+    if (shown) folder.querySelector('.folder-grid-wrap').classList.remove('collapsed');
+  });
+}
+
+/* ── Load ── */
+async function loadDashboard(force = false) {
+  if (!cfg.repo) { openModal(); return; }
+  document.getElementById('config-banner').classList.add('hidden');
+
+  const dash = document.getElementById('dashboard');
+  dash.innerHTML = `<div class="state-box"><div class="state-icon">⏳</div>從 GitHub 讀取 repo 結構…</div>`;
+  document.getElementById('statsStrip').style.display = 'none';
+
+  try {
+    const tree = await getTree();
+    const folders = await buildFolders(tree);
+    renderFolders(folders);
+  } catch (err) {
+    dash.innerHTML = `<div class="state-box">
+      <div class="state-icon">⚠️</div>
+      讀取失敗：${err.message}<br><br>
+      <button class="icon-btn" onclick="openModal()" style="margin:auto">⚙ 重新設定</button>
+    </div>`;
+    document.getElementById('config-banner').classList.remove('hidden');
+  }
+}
+
+/* ── Init ── */
+if (cfg.repo) {
+  document.getElementById('config-banner').classList.add('hidden');
+  loadDashboard();
+} else {
+  // Show banner
+}
+</script>
+</body>
+</html>
